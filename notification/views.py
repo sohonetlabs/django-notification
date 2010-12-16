@@ -31,11 +31,22 @@ def notices(request):
         notices
             A list of :model:`notification.Notice` objects that are not archived
             and to be displayed on the site.
+        
+        only_show
+            A list of filters corresponding to :model:`notification.NoticeType`
+            labels, if present in ``request.GET``
     """
     notices = Notice.objects.notices_for(request.user, on_site=True)
     
+    if 'only_show' in request.GET:
+        only_show = request.GET['only_show'].split(',')
+        notices = notices.filter(notice_type__in=only_show)            
+    else:
+        only_show = None
+    
     return render_to_response("notification/notices.html", {
         "notices": notices,
+        "only_show" : only_show,
     }, context_instance=RequestContext(request))
     
 @login_required
