@@ -8,3 +8,9 @@ register = template.Library()
 def get_noticetypes_startingwith(txt):
     types = NoticeType.objects.filter(label__startswith=txt).values_list('pk', flat=True)
     return u",".join([str(i) for i in types])
+    
+@register.simple_tag
+def get_noticetypes_in(labels):
+    labels = labels.split(",")
+    types = NoticeType.objects.filter(label__in=labels).values_list('pk', flat=True)
+    return u",".join([str(i) for i in types])
