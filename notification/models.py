@@ -436,12 +436,8 @@ def stop_observing(observed, observer, signal="post_save"):
     observed_item = ObservedItem.objects.get_for(observed, observer, signal)
     observed_item.delete()
 
-<<<<<<< HEAD
-def send_observation_notices_for(observed, signal='post_save', kwargs = {}):
-=======
 
 def send_observation_notices_for(observed, signal="post_save", extra_context=None):
->>>>>>> 408ede194893dfeac14ccf8d1a9072f1529815fb
     """
     Send a notice for each registered user about an observed object.
     """
@@ -449,11 +445,7 @@ def send_observation_notices_for(observed, signal="post_save", extra_context=Non
         extra_context = {}
     observed_items = ObservedItem.objects.all_for(observed, signal)
     for observed_item in observed_items:
-<<<<<<< HEAD
-        observed_item.send_notice(kwargs)
-=======
         observed_item.send_notice(extra_context)
->>>>>>> 408ede194893dfeac14ccf8d1a9072f1529815fb
     return observed_items
 
 
