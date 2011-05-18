@@ -34,22 +34,6 @@ def notices(request):
         notices
             A list of :model:`notification.Notice` objects that are not archived
             and to be displayed on the site.
-    """
-    notices = Notice.objects.notices_for(request.user, on_site=True)
-    
-    return render_to_response("notification/notices.html", {
-        "notices": notices,
-    }, context_instance=RequestContext(request))
-
-
-@login_required
-def notice_settings(request):
-    """
-    The notice settings view.
-    
-    Template: :template:`notification/notice_settings.html`
-    
-    Context:
         
         only_show
             A list of filters corresponding to :model:`notification.NoticeType`
