@@ -22,6 +22,11 @@ from django.contrib.auth.models import AnonymousUser
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
+if 'mailer' in settings.INSTALLED_APPS:
+    from mailer import send_html_mail
+else:
+    send_html_mail = False
+
 QUEUE_ALL = getattr(settings, "NOTIFICATION_QUEUE_ALL", False)
 
 
@@ -320,11 +325,19 @@ def send_now(users, label, extra_context=None, on_site=True, sender=None):
             "message": messages["full.txt"],
         }, context)
         
+        body_html = render_to_string("notification/email_body.html", {
+            "message": messages["full.html"],
+        }, context)
+        
         notice = Notice.objects.create(recipient=user, message=messages["notice.html"],
             notice_type=notice_type, on_site=on_site, sender=sender)
         if should_send(user, notice_type, "1") and user.email and user.is_active: # Email
             recipients.append(user.email)
-        send_mail(subject, body, settings.DEFAULT_FROM_EMAIL, recipients)
+
+        if send_html_mail and body_html:
+            send_html_mail(subject, body, body_html, settings.DEFAULT_FROM_EMAIL, recipients)
+        else:
+            send_mail(subject, body, settings.DEFAULT_FROM_EMAIL, recipients)
     
     # reset environment to original language
     activate(current_language)
