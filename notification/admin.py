@@ -9,10 +9,11 @@ class NoticeTypeAdmin(admin.ModelAdmin):
 
 class NoticeSettingAdmin(admin.ModelAdmin):
     list_display = ["id", "user", "notice_type", "medium", "send"]
-
+    raw_id_fields = ('user', )
 
 class NoticeAdmin(admin.ModelAdmin):
     list_display = ["message", "recipient", "sender", "notice_type", "added", "unseen", "archived"]
+    raw_id_fields = ('recipient', 'sender', )
 
 
 admin.site.register(NoticeQueueBatch)
