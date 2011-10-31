@@ -10,12 +10,10 @@ from django.conf import settings
 from notification.models import Notice, NoticeType
 
 
+class TestRemoveOldNoticesCommand(TestCase):
 
-
-class TestCleanNotificationsCommand(TestCase):
-
-    def call_clean_notifications_command(self, dryrun=False):
-        call_command('clean_notifications', dryrun=dryrun)
+    def call_remove_old_notices_command(self, dryrun=False):
+        call_command('remove_old_notices', dryrun=dryrun)
 
     def setUp(self):
         self.user1 = User.objects.create_user('user1', 'user1@example.com', '123456')
@@ -31,21 +29,21 @@ class TestCleanNotificationsCommand(TestCase):
         return notice
 
     def test_notifications_not_old_enough(self):
-        settings.NOTIFICATION_MAX_AGE = 999 # big number to make notifications
+        settings.NOTICES_MAX_AGE = 999 # big number to make notifications
                                             # look young
         notice = self.create_notice()
-        self.call_clean_notifications_command()
+        self.call_remove_old_notices_command()
         self.assertEqual(1, Notice.objects.count())
         
     def test_notification_old_enough(self):
-        settings.NOTIFICATION_MAX_AGE = 0 # every notice will be old enough
+        settings.NOTICES_MAX_AGE = 0 # every notice will be old enough
         notice = self.create_notice()
-        self.call_clean_notifications_command()
+        self.call_remove_old_notices_command()
         self.assertEqual(0, Notice.objects.count())
     
     def test_dry_run(self):
-        settings.NOTIFICATION_MAX_AGE = 0 # every notice will be old enough
+        settings.NOTICES_MAX_AGE = 0 # every notice will be old enough
         notice = self.create_notice()
-        self.call_clean_notifications_command(dryrun=True)
+        self.call_remove_old_notices_command(dryrun=True)
         self.assertEqual(1, Notice.objects.count())
 

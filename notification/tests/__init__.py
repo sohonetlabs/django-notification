@@ -1,1 +1,1 @@
-from test_clean_notifications import *
+from test_remove_old_notices import *
