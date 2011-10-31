@@ -10,7 +10,7 @@ from notification.models import Notice
 
 
 class Command(BaseCommand):
-    """Remove old queue item"""
+    """Remove old notifications"""
     help = __doc__
 
     option_list = BaseCommand.option_list + (
@@ -18,7 +18,7 @@ class Command(BaseCommand):
             action='store_true',
             dest='dryrun',
             default=False,
-            help='Report what will be deleted without actually doing it'),
+            help='Print what would be deleted without actually doing it'),
         )
 
     def handle(self, *args, **options):
