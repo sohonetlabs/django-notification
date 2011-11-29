@@ -13,7 +13,7 @@ from notification.feeds import NoticeUserFeed
 @basic_auth_required(realm="Notices Feed", callback_func=simple_basic_auth_callback)
 def feed_for_user(request):
     """
-    An atom feed for all unarchived :model:`notification.Notice`s for a user.
+    An atom feed for all :model:`notification.Notice`s for a user.
     """
     feedgen = NoticeUserFeed().get_feed(request.user.username)
     response = HttpResponse(mimetype=feedgen.mime_type)
@@ -30,8 +30,7 @@ def notices(request):
     Context:
     
         notices
-            A list of :model:`notification.Notice` objects that are not archived
-            and to be displayed on the site.
+            A list of :model:`notification.Notice` to be displayed on the site.
         
         only_show
             A list of filters corresponding to :model:`notification.NoticeType`

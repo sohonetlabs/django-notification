@@ -93,29 +93,35 @@ def should_send(user, notice_type, medium):
 
 class NoticeManager(models.Manager):
     
-    def notices_for(self, user, archived=False, unseen=None, on_site=None, sent=False):
+    def notices_for(self, user, archived=None, unseen=None, on_site=None, sent=False):
         """
         returns Notice objects for the given user.
         
-        If archived=False, it only include notices not archived.
-        If archived=True, it returns all notices for that user.
+        If sent=True, include only sent notices.
+        If sent=False, include only received notices.
         
-        If unseen=None, it includes all notices.
-        If unseen=True, return only unseen notices.
-        If unseen=False, return only seen notices.
+        If archived=None, it doesn't filter on 'archived' field.
+        If archived=True, include only archived notices.
+        If archived=False, include only not archived notices.
+
+        If unseen=None, it doesn't filter on 'unseen' field.
+        If unseen=True, include only unseen notices.
+        If unseen=False, include only seen notices.
         """
+        lookup_kwargs = {}
         if sent:
-            lookup_kwargs = {"sender": user}
+            lookup_kwarg["sender"] = user
         else:
-            lookup_kwargs = {"recipient": user}
-        qs = self.filter(**lookup_kwargs)
-        if not archived:
-            self.filter(archived=archived)
+            lookup_kwargs["recipient"] = user
+
+        if archived is not None:
+            lookup_kwargs["archived"] = archived
         if unseen is not None:
-            qs = qs.filter(unseen=unseen)
+            lookup_kwargs["unseen"] = unseen
         if on_site is not None:
-            qs = qs.filter(on_site=on_site)
-        return qs.select_related('notice_type')
+            lookup_kwargs["on_site"] = on_site
+
+        return self.filter(**lookup_kwargs)
 
     def unseen_count_for(self, recipient, **kwargs):
         """
