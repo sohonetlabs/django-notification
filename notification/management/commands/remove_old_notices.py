@@ -18,7 +18,7 @@ class Command(BaseCommand):
             action='store_true',
             dest='dryrun',
             default=False,
-            help='Print what would be deleted without actually doing it'),
+            help='Count the number of elements that would be deleted, without actually doing it'),
         )
 
     def handle(self, *args, **options):
@@ -27,10 +27,8 @@ class Command(BaseCommand):
         limit = datetime.fromtimestamp(limit)
         notices = Notice.objects.filter(added__lte=limit)
         if dryrun:
-            for notice in notices:
-                print '%s pk=%s\n' % (notice, notice.pk)
             count = notices.count()
-            print 'Total count of notice to be deleted %s' % count
+            print 'Total count of notices to be deleted: %d' % count
         else:
             notices.delete()
 
